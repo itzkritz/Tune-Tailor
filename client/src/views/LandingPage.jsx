@@ -98,8 +98,8 @@ export default function LandingPage() {
           <div className="gradient-line" style={{ margin: '2rem 0', opacity: 0.3 }}></div>
           <p>
             GET IN TOUCH &nbsp;—&nbsp; 
-            <span style={{ color: 'var(--neon-primary)', cursor: 'pointer' }}> creator@tunetailor.example.com</span> &nbsp;|&nbsp; 
-            <span style={{ color: 'var(--neon-primary)', cursor: 'pointer' }}> linkedin.com/in/tune-tailor-developer</span>
+            <a href="mailto:kritikamishra4000@gmail.com" style={{ color: 'var(--neon-primary)', textDecoration: 'none' }}> kritikamishra4000@gmail.com</a> &nbsp;|&nbsp; 
+            <a href="https://www.linkedin.com/in/kritika-mishra-84a18728a" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--neon-primary)', textDecoration: 'none' }}> linkedin.com/in/kritika-mishra-84a18728a</a>
           </p>
         </footer>
       </main>

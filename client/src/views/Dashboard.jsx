@@ -55,6 +55,7 @@ export default function Dashboard() {
         <ul className="dashboard-nav-links">
           <li className="active">Journal</li>
           <li onClick={() => router.push('/history')}>History Gallery</li>
+          <li onClick={() => router.push('/favorites')}>Favorites</li>
           <li className="logout-btn" onClick={() => signOut({ callbackUrl: '/' })}>Log Out</li>
         </ul>
         {session?.user && (

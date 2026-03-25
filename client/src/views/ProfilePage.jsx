@@ -11,6 +11,7 @@ export default function ProfilePage() {
   const [username, setUsername] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
   const [customBanner, setCustomBanner] = useState('');
+  const [featuredSongs, setFeaturedSongs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -47,6 +48,16 @@ export default function ProfilePage() {
           setAvatarUrl(session.user.image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${session.user.email}`);
           setCustomBanner(localStorage.getItem('tt_banner') || '');
         }
+        
+        // Fetch globally pinned songs (Migrate older single-song if exists)
+        const pinnedList = localStorage.getItem(`tt_profile_songs_${session.user.email}`);
+        if (pinnedList) {
+          setFeaturedSongs(JSON.parse(pinnedList));
+        } else {
+          const oldPinned = localStorage.getItem(`tt_profile_song_${session.user.email}`);
+          if (oldPinned) setFeaturedSongs([JSON.parse(oldPinned)]);
+        }
+
       } catch (err) {
         console.error("Failed fetching Supabase user:", err);
       } finally {
@@ -96,6 +107,7 @@ export default function ProfilePage() {
         <ul className="dashboard-nav-links">
           <li onClick={() => router.push('/dashboard')}>Journal</li>
           <li onClick={() => router.push('/history')}>History Gallery</li>
+          <li onClick={() => router.push('/favorites')}>Favorites</li>
           <li className="logout-btn" onClick={() => signOut({ callbackUrl: '/' })}>Log Out</li>
         </ul>
         {session?.user && (
@@ -163,6 +175,7 @@ export default function ProfilePage() {
                       <span className="bio-sparkles">⋆⁺₊⋆ ☾ ⋆⁺₊⋆</span>
                     </>
                   )}
+                  
                 </div>
               </div>
 
@@ -179,6 +192,81 @@ export default function ProfilePage() {
                 )}
               </div>
             </div>
+
+            {/* FULL SCREEN / CENTERED FEATURED SOUNDTRACK LIST */}
+            {!isEditing && featuredSongs.length > 0 && (
+              <div style={{
+                marginTop: '4rem', background: 'rgba(11,4,16,0.3)', border: '1px solid var(--glass-border)',
+                padding: '2rem', borderRadius: '20px', display: 'flex', flexDirection: 'column',
+                width: '100%', maxWidth: '1000px', margin: '4rem auto 0',
+                backdropFilter: 'blur(20px)', boxShadow: '0 20px 50px rgba(0,0,0,0.5)'
+              }}>
+                <h3 style={{ fontSize: '1rem', color: 'var(--neon-primary)', fontWeight: 'black', letterSpacing: '4px', marginBottom: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
+                  <span style={{ height: '1px', flex: 1, background: 'linear-gradient(90deg, transparent, var(--neon-primary))' }}></span>
+                  FEATURED SOUNDTRACK
+                  <span style={{ height: '1px', flex: 1, background: 'linear-gradient(270deg, transparent, var(--neon-primary))' }}></span>
+                </h3>
+
+                {/* Spotify style header */}
+                <div style={{ 
+                  display: 'grid', gridTemplateColumns: '40px 1.5fr 1fr 150px', 
+                  padding: '0.8rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)', 
+                  color: 'var(--text-secondary)', fontSize: '0.75rem', fontWeight: 'bold', 
+                  letterSpacing: '1px', marginBottom: '1rem' 
+                }}>
+                  <span>#</span>
+                  <span>TITLE</span>
+                  <span>ALBUM</span>
+                  <span style={{ textAlign: 'right' }}>ACTIONS</span>
+                </div>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  {featuredSongs.map((track, idx) => (
+                    <div key={idx} style={{ 
+                      display: 'grid', gridTemplateColumns: '40px 1.5fr 1fr 150px', alignItems: 'center',
+                      padding: '0.8rem 1.5rem', borderRadius: '8px', transition: 'all 0.3s ease',
+                      borderBottom: '1px solid rgba(255,255,255,0.05)'
+                    }} className="track-row-hover">
+                      <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '0.9rem', fontWeight: 'bold' }}>{idx + 1}</span>
+
+                      <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                        <span style={{ color: 'white', fontWeight: 'bold', fontSize: '0.95rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{track.name}</span>
+                        <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>{track.artist}</span>
+                      </div>
+
+                      <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.85rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {track.album && track.album !== "Unknown Album" ? track.album : track.artist}
+                      </span>
+
+                      <div style={{ display: 'flex', gap: '1.2rem', justifyContent: 'flex-end', alignItems: 'center' }}>
+                        <button 
+                          onClick={() => {
+                            if (track.external_url) {
+                              window.open(track.external_url, '_blank');
+                            } else {
+                              window.open(`https://open.spotify.com/search/${encodeURIComponent(track.name + ' ' + track.artist)}`, '_blank');
+                            }
+                          }}
+                          style={{ background: '#1DB954', border: 'none', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer' }}
+                        >
+                          <span style={{ color: 'black', fontSize: '1rem' }}>▶</span>
+                        </button>
+                        <button 
+                          onClick={() => {
+                            const updated = featuredSongs.filter((_, i) => i !== idx);
+                            localStorage.setItem(`tt_profile_songs_${session.user.email}`, JSON.stringify(updated));
+                            setFeaturedSongs(updated);
+                          }}
+                          style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '1.1rem', opacity: 0.5 }}
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </main>

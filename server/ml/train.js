@@ -39,11 +39,11 @@ function randomChoice(arr) { return arr[Math.floor(Math.random() * arr.length)];
 
 // --- 2. THE GENRE MAPPER ---
 function mapToGenre(score) {
-    if (score >= 0.85) return randomChoice(['techno', 'power pop', 'hyperpop', 'hard rock', 'edm', 'drum & bass']);
-    if (score >= 0.65) return randomChoice(['pop', 'synthwave', 'indie pop', 'funk', 'disco', 'reggaeton']);
-    if (score >= 0.45) return randomChoice(['lofi', 'jazz', 'chillhop', 'acoustic', 'bossa nova', 'soft rock']);
-    if (score >= 0.25) return randomChoice(['classical', 'ambient', 'soul', 'folk', 'blues', 'trip hop']);
-    return randomChoice(['grunge', 'emo', 'dark wave', 'industrial', 'gothic rock', 'heavy metal']);
+    if (score >= 0.85) return randomChoice(['pop', 'dance', 'edm', 'techno', 'hyperpop']);
+    if (score >= 0.65) return randomChoice(['indie pop', 'funk', 'disco', 'synthwave']);
+    if (score >= 0.45) return randomChoice(['chill', 'chillhop', 'acoustic', 'r&b', 'jazz']);
+    if (score >= 0.25) return randomChoice(['ambient', 'classical', 'soul', 'folk']);
+    return randomChoice(['sad', 'lofi', 'blues', 'piano', 'melancholy']);
 }
 
 // --- 3. TEXT MORPHER ---
@@ -128,7 +128,7 @@ for (let i = 0; i < targetSize; i++) {
 // --- 5. TRAIN AND SAVE ---
 console.log("Training Bayesian Model on generated dataset...");
 classifier.train();
-classifier.save('ml_model.json', function(err, classifier) {
+classifier.save(path.join(__dirname, 'model.json'), function(err, classifier) {
     if (err) console.error("Error saving model:", err);
-    else console.log("✅ Supercharged Model properly trained and saved to ml_model.json!");
+    else console.log("✅ Supercharged Model properly trained and saved to model.json!");
 });

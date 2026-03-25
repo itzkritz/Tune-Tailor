@@ -383,3 +383,13 @@
   transform-origin: top center;
   width: 100%;
 }
+
+.track-row-hover:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.track-row-hover:hover span, 
+.track-row-hover:hover .track-name {
+  color: var(--neon-primary) !important;
+}
+

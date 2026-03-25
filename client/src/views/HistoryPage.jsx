@@ -53,6 +53,7 @@ export default function HistoryPage() {
         <ul className="dashboard-nav-links">
           <li onClick={() => router.push('/dashboard')}>Journal</li>
           <li className="active">History Gallery</li>
+          <li onClick={() => router.push('/favorites')}>Favorites</li>
           <li className="logout-btn" onClick={() => signOut({ callbackUrl: '/' })}>Log Out</li>
         </ul>
         {session?.user && (

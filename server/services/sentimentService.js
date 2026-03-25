@@ -45,14 +45,16 @@ function predictGenreFromText(text) {
   let target_valence = 0.5;
   let target_energy = 0.5;
 
-  if (predictedGenre === 'pop' || predictedGenre === 'dance') {
+  if (['pop', 'dance', 'edm', 'techno', 'hyperpop'].includes(predictedGenre)) {
     target_valence = 0.8; target_energy = 0.9;
-  } else if (predictedGenre === 'chill' || predictedGenre === 'acoustic') {
-    target_valence = 0.6; target_energy = 0.3;
-  } else if (predictedGenre === 'sad' || predictedGenre === 'lofi') {
-    target_valence = 0.2; target_energy = 0.2;
-  } else if (predictedGenre === 'metal' || predictedGenre === 'rock') {
-    target_valence = 0.3; target_energy = 0.9;
+  } else if (['indie pop', 'funk', 'disco', 'synthwave'].includes(predictedGenre)) {
+    target_valence = 0.7; target_energy = 0.7;
+  } else if (['chill', 'chillhop', 'acoustic', 'r&b', 'jazz', 'folk'].includes(predictedGenre)) {
+    target_valence = 0.6; target_energy = 0.4;
+  } else if (['ambient', 'classical', 'soul'].includes(predictedGenre)) {
+    target_valence = 0.4; target_energy = 0.2;
+  } else if (['sad', 'lofi', 'blues', 'piano', 'melancholy'].includes(predictedGenre)) {
+    target_valence = 0.1; target_energy = 0.1;
   }
 
   return {
